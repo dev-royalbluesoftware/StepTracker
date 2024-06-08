@@ -11,6 +11,32 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    // MARK: - Picker Properties
+    
+    enum HealthMetricContext: CaseIterable, Identifiable {
+        case steps, weight
+        var id: Self { self }
+        
+        var title: String {
+            switch self {
+                
+            case .steps:
+                return "Steps"
+                
+            case .weight:
+                return "Weight"
+            }
+        }
+    }
+    
+    // MARK: - Properties
+    
+    @State private var selectedStat: HealthMetricContext = .steps
+    var isSteps: Bool { selectedStat == .steps }
+    
+    // MARK: - Body View
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -18,24 +44,33 @@ struct ContentView: View {
                 // MARK: - Main VStack
                 
                 VStack(spacing: 20) {
+                    
+                    Picker("Selected Stat", selection: $selectedStat) {
+                        ForEach(HealthMetricContext.allCases) { metric in
+                            Text(metric.title)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    
                     // Card VStack
                     VStack {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Label("Steps", systemImage: "figure.walk")
-                                    .font(.title3.bold())
-                                    .foregroundStyle(.pink)
+                        NavigationLink(value: selectedStat) {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Label("Steps", systemImage: "figure.walk")
+                                        .font(.title3.bold())
+                                        .foregroundStyle(.pink)
+                                    
+                                    Text("Avg: 10K Steps")
+                                        .font(.caption)
+                                }
                                 
-                                Text("Avg: 10K Steps")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
                             }
-                            
-                            Spacer()
-                            
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(.secondary)
                         }
+                        .foregroundStyle(.secondary)
                         .padding(.bottom, 12)
                         
                         RoundedRectangle(cornerRadius: 12)
@@ -44,6 +79,7 @@ struct ContentView: View {
                     }
                     .padding()
                     .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
+                   
                     // Card VStack
                     VStack(alignment: .leading) {
                         VStack(alignment: .leading) {
@@ -67,7 +103,11 @@ struct ContentView: View {
             }
             .padding()
             .navigationTitle("Dashboard")
+            .navigationDestination(for: HealthMetricContext.self) { metric in
+                Text(metric.title)
+            }
         }
+        .tint(isSteps ? .pink : .indigo)
     }
 }
 
