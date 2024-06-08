@@ -1,7 +1,7 @@
 //
 //
 // StepTracker
-// ContentView.swift
+// DashboardView.swift
 //
 // Created by jjbuell-dev
 // Copyright © Royal Blue Software
@@ -10,25 +10,25 @@
 
 import SwiftUI
 
-struct ContentView: View {
+// MARK: - Picker Properties
+
+enum HealthMetricContext: CaseIterable, Identifiable {
+    case steps, weight
+    var id: Self { self }
     
-    // MARK: - Picker Properties
-    
-    enum HealthMetricContext: CaseIterable, Identifiable {
-        case steps, weight
-        var id: Self { self }
-        
-        var title: String {
-            switch self {
-                
-            case .steps:
-                return "Steps"
-                
-            case .weight:
-                return "Weight"
-            }
+    var title: String {
+        switch self {
+            
+        case .steps:
+            return "Steps"
+            
+        case .weight:
+            return "Weight"
         }
     }
+}
+
+struct DashboardView: View {
     
     // MARK: - Properties
     
@@ -45,6 +45,7 @@ struct ContentView: View {
                 
                 VStack(spacing: 20) {
                     
+                    // Picker (Segmented Controller)
                     Picker("Selected Stat", selection: $selectedStat) {
                         ForEach(HealthMetricContext.allCases) { metric in
                             Text(metric.title)
@@ -104,7 +105,7 @@ struct ContentView: View {
             .padding()
             .navigationTitle("Dashboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
-                Text(metric.title)
+                HealthDataListView(metric: metric)
             }
         }
         .tint(isSteps ? .pink : .indigo)
@@ -112,5 +113,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    DashboardView()
 }
