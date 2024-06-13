@@ -19,6 +19,7 @@ struct HealthKitPermissionPrimingView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var isShowingHealthKitPermissions = false
+    @Binding var hasSeen: Bool
     
     // MARK: - Properties
     
@@ -54,6 +55,7 @@ struct HealthKitPermissionPrimingView: View {
             .tint(.pink)
         }
         .padding(30)
+        .onAppear { hasSeen = true } // toggles to true so the PrimingView only shows 1x
         .healthDataAccessRequest(
             store: hkManager.store,
             shareTypes: hkManager.types,
@@ -71,6 +73,6 @@ struct HealthKitPermissionPrimingView: View {
 }
 
 #Preview {
-    HealthKitPermissionPrimingView()
+    HealthKitPermissionPrimingView(hasSeen: .constant(true))
         .environment(HealthKitManager())
 }
